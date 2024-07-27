@@ -72,6 +72,7 @@ class AdminSplitDateTime(BaseAdminSplitDateTime):
 
 class DateRangeFilter(admin.filters.FieldListFilter):
     _request_key = "DJANGO_RANGEFILTER_ADMIN_JS_LIST"
+    _own_used_parameters = {}
 
     def __init__(self, field, request, params, model, model_admin, field_path):
         self.lookup_kwarg_gte = "{0}__range__gte".format(field_path)
@@ -80,12 +81,17 @@ class DateRangeFilter(admin.filters.FieldListFilter):
         self.default_gte, self.default_lte = self._get_default_values(
             request, model_admin, field_path
         )
+        for p in self.expected_parameters():
+            if p in params.keys():
+                value = params.pop(p)[-1]
+                self._own_used_parameters[p] = value
 
         super(DateRangeFilter, self).__init__(
             field, request, params, model, model_admin, field_path
         )
         self.request = request
         self.model_admin = model_admin
+        self.used_parameters.update(self._own_used_parameters)
 
         custom_title = self._get_custom_title(request, model_admin, field_path)
         if custom_title:
