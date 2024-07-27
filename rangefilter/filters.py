@@ -72,11 +72,11 @@ class AdminSplitDateTime(BaseAdminSplitDateTime):
 
 class DateRangeFilter(admin.filters.FieldListFilter):
     _request_key = "DJANGO_RANGEFILTER_ADMIN_JS_LIST"
-    _own_used_parameters = {}
 
     def __init__(self, field, request, params, model, model_admin, field_path):
         self.lookup_kwarg_gte = "{0}__range__gte".format(field_path)
         self.lookup_kwarg_lte = "{0}__range__lte".format(field_path)
+        self._own_used_parameters = {}
 
         self.default_gte, self.default_lte = self._get_default_values(
             request, model_admin, field_path
